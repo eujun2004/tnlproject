@@ -1,12 +1,8 @@
 import re
-import nltk
 import pandas as pd
 import streamlit as st
+import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-
 
 # ============================================================
 # Page Configuration
@@ -17,7 +13,6 @@ st.set_page_config(
     page_icon="💬",
     layout="wide"
 )
-
 
 # ============================================================
 # Simple Page Styling
@@ -55,37 +50,18 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# ============================================================
-# Load NLP Resources
-# ============================================================
-
-@st.cache_resource
-def load_nltk_resources():
-    nltk.download("stopwords", quiet=True)
-    nltk.download("wordnet", quiet=True)
-    nltk.download("omw-1.4", quiet=True)
-
-    stop_words = set(stopwords.words("english"))
-    lemmatizer = WordNetLemmatizer()
-
-    return stop_words, lemmatizer
-
-
-stop_words, lemmatizer = load_nltk_resources()
-
-
 # ============================================================
 # Load Trained RoBERTa Model and Tokenizer
 # ============================================================
 
 @st.cache_resource
 def load_model():
-    # Replace with the actual path to your saved RoBERTa folder
-    model_repo = "Eugene2004/Roberta-For-Sentiment-Analysis" 
+    # Streamlit will download the model directly from Hugging Face!
+    # REPLACE THIS STRING WITH YOUR ACTUAL HUGGING FACE REPO:
+    model_path = "your_huggingface_username/your_model_name" 
     
-    tokenizer = AutoTokenizer.from_pretrained(model_repo)
-    model = AutoModelForSequenceClassification.from_pretrained(model_repo)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    model = AutoModelForSequenceClassification.from_pretrained(model_path)
     
     # Set model to evaluation mode for inference
     model.eval() 
@@ -94,7 +70,7 @@ def load_model():
 try:
     tokenizer, model = load_model()
 except Exception as e:
-    st.error("Model loading failed. Please ensure your RoBERTa model folder is correct.")
+    st.error("Model loading failed. Please ensure your Hugging Face repo name is correct.")
     st.exception(e)
     st.stop()
 
@@ -140,15 +116,13 @@ def predict_sentiment(comment):
 # Sidebar
 # ============================================================
 
-st.sidebar.title("📌 System Information")
+st.sidebar.title("💻 System Information")
 
 st.sidebar.markdown(
     """
     **Project:** Social Media & Public Opinion  
-    **Deployed Model:** SVM / LinearSVC  
-    **Feature Extraction:** TF-IDF  
+    **Deployed Model:** RoBERTa (Transformer)  
     **Output Classes:** Positive, Neutral, Negative  
-    **Advanced Model Evaluated:** RoBERTa / BERT-based Transformer
     """
 )
 
@@ -189,8 +163,8 @@ st.markdown(
     """
     <div class="info-card">
     <b>Model Information:</b><br>
-    The deployed model is <b>SVM / LinearSVC</b> with <b>TF-IDF feature extraction</b>. 
-    RoBERTa / BERT-based Transformer was also trained and evaluated as an advanced model during model comparison.
+    The deployed model is a fine-tuned <b>RoBERTa (Transformer)</b> architecture. 
+    It leverages deep learning and self-attention to understand context and nuance better than traditional models.
     </div>
     """,
     unsafe_allow_html=True
@@ -213,7 +187,7 @@ st.markdown(
 
 tab1, tab2 = st.tabs([
     "🔍 Single Comment Prediction",
-    "📂 Batch CSV Sentiment Analysis"
+    "📊 Batch CSV Sentiment Analysis"
 ])
 
 
@@ -285,7 +259,7 @@ with tab2:
             index=default_index
         )
 
-		if st.button("Analyse CSV", key="batch_analyse_button"):
+        if st.button("Analyse CSV", key="batch_analyse_button"):
             st.info("Predicting sentiments... (This may take a moment with Transformer models)")
             
             # Apply the new prediction function to each row
