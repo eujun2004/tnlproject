@@ -285,7 +285,7 @@ with tab2:
             index=default_index
         )
 
-	if st.button("Analyse CSV", key="batch_analyse_button"):
+		if st.button("Analyse CSV", key="batch_analyse_button"):
             st.info("Predicting sentiments... (This may take a moment with Transformer models)")
             
             # Apply the new prediction function to each row
