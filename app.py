@@ -4,20 +4,13 @@ import streamlit as st
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# ============================================================
-# Page Configuration
-# ============================================================
-
+#Page configuration
 st.set_page_config(
     page_title="Social Media Sentiment Analysis",
-    page_icon="💬",
     layout="wide"
 )
 
-# ============================================================
-# Simple Page Styling
-# ============================================================
-
+#Page Styling
 st.markdown(
     """
     <style>
@@ -50,38 +43,29 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ============================================================
-# Load Trained RoBERTa Model and Tokenizer
-# ============================================================
-
+#Load Trained RoBERTa Model and AutoTokenizer
 @st.cache_resource
 def load_model():
-    # Streamlit will download the model directly from Hugging Face!
-    # REPLACE THIS STRING WITH YOUR ACTUAL HUGGING FACE REPO:
     model_path = "Eugene2004/Roberta-for-Sentiment-Analysis" 
     
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForSequenceClassification.from_pretrained(model_path)
     
-    # Set model to evaluation mode for inference
     model.eval() 
     return tokenizer, model
 
 try:
     tokenizer, model = load_model()
 except Exception as e:
-    st.error("Model loading failed. Please ensure your Hugging Face repo name is correct.")
+    st.error("Model loading failed. Please ensure Hugging Face repository name is correct.")
     st.exception(e)
     st.stop()
 
 
-# ============================================================
-# Text Preprocessing & Prediction (RoBERTa)
-# ============================================================
-
+#Text Preprocessing and Prediction
 def preprocess_text(text):
     text = str(text)
-    # Remove URLs and Mentions, but KEEP punctuation and stop words!
+    # Remove URLs and Mentions, but keep punctuation and stop words
     text = re.sub(r"http\S+|www\S+|https\S+", "", text)
     text = re.sub(r"@\w+", "", text)
     text = re.sub(r"\s+", " ", text).strip()
@@ -105,17 +89,13 @@ def predict_sentiment(comment):
         logits = outputs.logits
         predicted_class_id = torch.argmax(logits, dim=-1).item()
     
-    # Map the predicted ID to your labels (Based on your uploaded config data)
+    # Map the predicted ID to labels 
     label_map = {0: "Negative", 1: "Neutral", 2: "Positive"}
     prediction = label_map[predicted_class_id]
     
     return prediction, cleaned_text
 
-
-# ============================================================
-# Sidebar
-# ============================================================
-
+#Sidebar design
 st.sidebar.title("💻 System Information")
 
 st.sidebar.markdown(
@@ -131,23 +111,17 @@ st.sidebar.divider()
 st.sidebar.markdown(
     """
     ### How to Use
-    1. Enter a social media comment for single prediction.
-    2. Upload a CSV file for batch analysis.
-    3. Select the column that contains comments.
-    4. View prediction results and public opinion summary.
-    5. Download the prediction results.
+    Enter a social media comment for single prediction OR Upload a CSV file for batch analysis.
+    For Batch CSV Sentiment Analysis:
+    1. After CSV file upload, select the column that contains comments.
+    2. View prediction results and public opinion summary.
+    3. Download the prediction results.
     """
 )
 
 st.sidebar.divider()
 
-st.sidebar.caption("TNL6323 Natural Language Processing Group Project")
-
-
-# ============================================================
-# Main Header
-# ============================================================
-
+#Main Header Design
 st.markdown(
     """
     <div class="main-title">💬 Social Media and Public Opinion Sentiment Analysis System</div>
@@ -170,31 +144,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="warning-card">
-    <b>Note:</b> For best results, enter English or translated English social media comments. 
-    Malay, Chinese, and mixed-language comments were handled during the dataset translation stage.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# ============================================================
-# Tabs
-# ============================================================
-
+#Tabs (System Function)
 tab1, tab2 = st.tabs([
-    "🔍 Single Comment Prediction",
-    "📊 Batch CSV Sentiment Analysis"
+    "Single Comment Prediction",
+    "Batch CSV Sentiment Analysis"
 ])
 
 
-# ============================================================
-# Tab 1: Single Comment Prediction
-# ============================================================
-
+#Function 1: Single Comment Sentiment Prediction
 with tab1:
     st.header("Single Comment Sentiment Prediction")
 
@@ -224,10 +181,7 @@ with tab1:
             st.caption("Sentiment predicted using RoBERTa.")
 
 
-# ============================================================
-# Tab 2: Batch CSV Sentiment Analysis
-# ============================================================
-
+#Function 2: Batch CSV Sentiment Analysis
 with tab2:
     st.header("Batch CSV Sentiment Analysis")
 
@@ -272,10 +226,7 @@ with tab2:
             st.subheader("Prediction Results")
             st.dataframe(batch_df)
 
-            # ====================================================
             # Public Opinion Summary
-            # ====================================================
-
             st.subheader("Public Opinion Summary")
 
             sentiment_order = ["Positive", "Neutral", "Negative"]
@@ -329,19 +280,13 @@ with tab2:
                     "The analysed comments show a mixed public opinion because two or more sentiment classes have the same highest count."
                 )
 
-            # ====================================================
             # Sentiment Distribution Chart
-            # ====================================================
-
             st.subheader("Sentiment Distribution")
 
             chart_df = summary_df.set_index("Sentiment")[["Count"]]
             st.bar_chart(chart_df)
 
-            # ====================================================
-            # Optional Evaluation if expected_sentiment exists
-            # ====================================================
-
+            # Optional Evaluation if expected_sentiment exists (For testing purposes)
             if "expected_sentiment" in batch_df.columns:
                 st.subheader("Optional Evaluation on Uploaded Sample")
 
@@ -362,10 +307,7 @@ with tab2:
                     "The official model evaluation is reported separately using the test set."
                 )
 
-            # ====================================================
             # Download Results
-            # ====================================================
-
             csv_output = batch_df.to_csv(index=False).encode("utf-8")
 
             st.download_button(
@@ -375,11 +317,6 @@ with tab2:
                 mime="text/csv"
             )
 
-
-# ============================================================
-# Footer
-# ============================================================
-
+# Footer design
 st.divider()
-
 st.caption("TNL6323 Natural Language Processing Group Project")
