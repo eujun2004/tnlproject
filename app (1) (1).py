@@ -58,7 +58,7 @@ st.markdown(
 def load_model():
     # Streamlit will download the model directly from Hugging Face!
     # REPLACE THIS STRING WITH YOUR ACTUAL HUGGING FACE REPO:
-    model_path = "your_huggingface_username/your_model_name" 
+    model_path = "Eugene2004/Roberta-For-Sentiment_Analysis" 
     
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForSequenceClassification.from_pretrained(model_path)
