@@ -82,7 +82,7 @@ stop_words, lemmatizer = load_nltk_resources()
 @st.cache_resource
 def load_model():
     # Replace with the actual path to your saved RoBERTa folder
-    model_repo = "Eugene2004/roberta-sentiment-analysis" 
+    model_repo = "Eugene2004/Roberta-For-Sentiment-Analysis" 
     
     tokenizer = AutoTokenizer.from_pretrained(model_repo)
     model = AutoModelForSequenceClassification.from_pretrained(model_repo)
