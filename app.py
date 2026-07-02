@@ -32,7 +32,7 @@ st.markdown(
         margin-bottom: 20px;
     }
     .warning-card {
-        background-color: #000000;
+        background-color: #ABCDEF;
         padding: 16px;
         border-radius: 10px;
         border-left: 6px solid #f5b942;
