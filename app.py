@@ -25,14 +25,14 @@ st.markdown(
         margin-bottom: 20px;
     }
     .info-card {
-        background-color: #ABCDEF;
+        background-color: #123456;
         padding: 18px;
         border-radius: 10px;
         border-left: 6px solid #4a90e2;
         margin-bottom: 20px;
     }
     .warning-card {
-        background-color: #123456;
+        background-color: #ABCDEF;
         padding: 16px;
         border-radius: 10px;
         border-left: 6px solid #f5b942;
