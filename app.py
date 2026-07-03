@@ -25,7 +25,7 @@ st.markdown(
         margin-bottom: 20px;
     }
     .info-card {
-        background-color: #123456;
+        background-color: #000000;
         padding: 18px;
         border-radius: 10px;
         border-left: 6px solid #4a90e2;
